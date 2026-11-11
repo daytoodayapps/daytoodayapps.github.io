@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tally Counter – Click Counter | Count Anything, Your Way</title>
+  <meta name="description"
+    content="Tally Counter (Count It) is a modern, fast, and feature-rich click counter app for Android. Track habits, workouts, inventory, prayers, and daily goals.">
+  <meta name="theme-color" content="#1E60F3">
+
+  <!-- Open Graph / Meta -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Tally Counter – Click Counter">
+  <meta property="og:description"
+    content="Count anything with custom steps, target goals, audio/speech feedback, daily resets, home screen widgets, and volume key counting.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #1E60F3;
+      --primary-light: #38BDF8;
+      --primary-dark: #1E40AF;
+      --accent: #6366F1;
+      --accent-gradient: linear-gradient(135deg, #38BDF8 0%, #1E60F3 50%, #6366F1 100%);
+      --bg-dark: #090E1A;
+      --bg-card: #0F172A;
+      --bg-card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      --success: #10B981;
+      --gold: #F59E0B;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Ambient background glow */
+    .glow-sphere {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(30, 96, 243, 0.18) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 70%);
+      filter: blur(80px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .glow-top-right {
+      top: -200px;
+      right: -200px;
+    }
+
+    .glow-mid-left {
+      top: 800px;
+      left: -250px;
+    }
+
+    /* Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(9, 14, 26, 0.85);
+      border-bottom: 1px solid var(--bg-card-border);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--accent-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(30, 96, 243, 0.4);
+    }
+
+    .logo-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-main);
+    }
+
+    .btn-nav-download {
+      background: rgba(30, 96, 243, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #38BDF8 !important;
+      padding: 8px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav-download:hover {
+      background: var(--primary);
+      color: white !important;
+      box-shadow: 0 0 16px rgba(30, 96, 243, 0.5);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 80px 0 60px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 50px;
+      align-items: center;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(30, 96, 243, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #38BDF8;
+      margin-bottom: 24px;
+    }
+
+    .badge-pill .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #38BDF8;
+      box-shadow: 0 0 10px #38BDF8;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.4;
+        transform: scale(0.85);
+      }
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+
+    .gradient-text {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-description {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+      max-width: 540px;
+    }
+
+    /* App Store Badges / Download Buttons */
+    .download-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .btn-store {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 22px;
+      border-radius: 16px;
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .btn-play-store {
+      background: #FFFFFF;
+      color: #0F172A;
+      box-shadow: 0 10px 25px -5px rgba(255, 255, 255, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-play-store:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 32px -4px rgba(30, 96, 243, 0.35);
+      background: #F8FAFC;
+    }
+
+    .btn-app-store-coming {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px dashed rgba(255, 255, 255, 0.22);
+      color: var(--text-muted);
+      cursor: not-allowed;
+      opacity: 0.85;
+    }
+
+    .btn-app-store-coming:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .store-icon {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .store-text {
+      text-align: left;
+    }
+
+    .store-text-sub {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.8;
+      font-weight: 600;
+    }
+
+    .store-text-main {
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .badge-coming-soon {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--gold);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Trust indicators */
+    .trust-row {
+      display: flex;
+      gap: 24px;
+      color: var(--text-dim);
+      font-size: 0.88rem;
+      font-weight: 500;
+      align-items: center;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .trust-item svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--success);
+    }
+
+    /* Interactive Live Demo Counter */
+    .demo-wrapper {
+      position: relative;
+    }
+
+    .demo-card {
+      background: linear-gradient(180deg, #131E35 0%, #0F172A 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 40px rgba(30, 96, 243, 0.15);
+      position: relative;
+    }
+
+    .demo-badge-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .demo-badge-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #38BDF8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .demo-counter-container {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 22px;
+      padding: 28px 24px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .demo-counter-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .demo-counter-value {
+      font-size: 4.5rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: #FFFFFF;
+      line-height: 1;
+      margin-bottom: 8px;
+      text-shadow: 0 0 25px rgba(56, 189, 248, 0.35);
+      transition: transform 0.1s ease;
+    }
+
+    .demo-counter-goal {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .demo-goal-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      margin-top: 14px;
+      overflow: hidden;
+    }
+
+    .demo-goal-fill {
+      height: 100%;
+      width: 42%;
+      background: var(--accent-gradient);
+      border-radius: 10px;
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .demo-buttons-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .btn-demo-tap {
+      border: none;
+      border-radius: 18px;
+      padding: 18px;
+      font-size: 1.5rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.1s, box-shadow 0.2s;
+      user-select: none;
+    }
+
+    .btn-demo-minus {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-demo-minus:active {
+      transform: scale(0.95);
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .btn-demo-plus {
+      background: var(--accent-gradient);
+      color: white;
+      box-shadow: 0 10px 20px rgba(30, 96, 243, 0.4);
+    }
+
+    .btn-demo-plus:active {
+      transform: scale(0.95);
+      box-shadow: 0 5px 12px rgba(30, 96, 243, 0.6);
+    }
+
+    .demo-quick-toggles {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .demo-toggle-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .demo-toggle-item svg {
+      width: 18px;
+      height: 18px;
+      fill: #38BDF8;
+    }
+
+    /* Features Grid Section */
+    .section-title-wrap {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 56px;
+    }
+
+    .section-title {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+
+    .section-sub {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 24px;
+      margin-bottom: 90px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 22px;
+      padding: 30px;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(56, 189, 248, 0.3);
+      box-shadow: 0 15px 35px -10px rgba(30, 96, 243, 0.2);
+    }
+
+    .feature-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(30, 96, 243, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .feature-icon-box svg {
+      width: 26px;
+      height: 26px;
+      fill: #38BDF8;
+    }
+
+    .feature-card h3 {
+      font-size: 1.22rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+
+    .feature-card p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Use Cases Section */
+    .use-cases-section {
+      padding: 60px 0 90px;
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid var(--bg-card-border);
+      border-bottom: 1px solid var(--bg-card-border);
+    }
+
+    .use-cases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .use-case-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      padding: 22px;
+      border-radius: 18px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .use-case-pill:hover {
+      transform: translateY(-3px);
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .use-case-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: rgba(30, 96, 243, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      transition: all 0.25s ease;
+    }
+
+    .use-case-pill:hover .use-case-icon-box {
+      background: rgba(30, 96, 243, 0.25);
+      border-color: rgba(56, 189, 248, 0.5);
+      transform: scale(1.08);
+    }
+
+    .use-case-icon-box svg {
+      width: 24px;
+      height: 24px;
+      fill: #38BDF8;
+    }
+
+    .use-case-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .use-case-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      padding: 90px 0;
+      max-width: 840px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 16px;
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 20px 24px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .faq-question svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--text-muted);
+      transition: transform 0.2s ease;
+    }
+
+    .faq-item.active .faq-question svg {
+      transform: rotate(180deg);
+      fill: #38BDF8;
+    }
+
+    .faq-answer {
+      padding: 0 24px 20px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      display: none;
+    }
+
+    .faq-item.active .faq-answer {
+      display: block;
+    }
+
+    /* CTA Bottom Banner */
+    .cta-banner {
+      background: linear-gradient(135deg, rgba(30, 96, 243, 0.25) 0%, rgba(99, 102, 241, 0.2) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 30px;
+      padding: 60px 40px;
+      text-align: center;
+      margin: 40px 0 90px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-banner h2 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .cta-banner p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+
+    .cta-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--bg-card-border);
+      padding: 40px 0;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-main);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding-top: 40px;
+      }
+
+      .badge-pill {
+        margin: 0 auto 20px;
+      }
+
+      .hero-description {
+        margin: 0 auto 32px;
+      }
+
+      .download-group {
+        justify-content: center;
+      }
+
+      .trust-row {
+        justify-content: center;
+        margin-bottom: 40px;
+      }
+
+      .hero-title {
+        font-size: 2.7rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero-title {
+        font-size: 2.2rem;
+      }
+
+      .download-group {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .btn-store {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Ambient Glow -->
+  <div class="glow-sphere glow-top-right"></div>
+  <div class="glow-sphere glow-mid-left"></div>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+          </svg>
+        </div>
+        <span>Tally Counter</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#demo">Live Demo</a>
+        <a href="#faq">FAQ</a>
+        <a href="https://play.google.com/store/apps/details?id=com.tushar.countit" target="_blank"
+          class="btn-nav-download">Get on Android</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Hero -->
+  <main class="container">
+    <section class="hero">
+      <div class="hero-left">
+        <div class="badge-pill">
+          <span class="pulse-dot"></span>
+          Now Available on Google Play
+        </div>
+        <h1 class="hero-title">
+          Count Anything.<br>
+          <span class="gradient-text">Your Way.</span>
+        </h1>
+        <p class="hero-description">
+          A modern, lightning-fast tally counter app built for daily habits, fitness sets, inventory counting, spiritual
+          chanting, and goal tracking. No accounts, zero clutter, 100% private.
+        </p>
+
+        <!-- Store Buttons -->
+        <div class="download-group">
+          <!-- Google Play Store Button -->
+          <a href="https://play.google.com/store/apps/details?id=com.tushar.countit" target="_blank"
+            class="btn-store btn-play-store">
+            <div class="store-icon">
+              <!-- Google Play Vector Logo -->
+              <svg viewBox="0 0 512 512" width="26" height="26">
+                <path fill="#4285F4" d="M325.3 234.3L104.6 13l280.8 161.2-60.1 59.9z" />
+                <path fill="#34A853"
+                  d="M47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0z" />
+                <path fill="#FBBC05"
+                  d="M471.7 232.7l-86.3-49.8-60.1 60.1 60.1 60.1 86.3-49.8c15.1-8.7 24.3-24.8 24.3-40.3s-9.2-31.6-24.3-40.3z" />
+                <path fill="#EA4335" d="M104.6 499l280.8-161.3-60.1-59.9L104.6 499z" />
+              </svg>
+            </div>
+            <div class="store-text">
+              <div class="store-text-sub">Get it on</div>
+              <div class="store-text-main">Google Play</div>
+            </div>
+          </a>
+
+          <!-- Apple App Store (Coming Soon) -->
+          <div class="btn-store btn-app-store-coming" title="iOS version is currently in development">
+            <div class="store-icon">
+              <!-- Apple Vector Logo -->
+              <svg viewBox="0 0 170 170" width="24" height="24" fill="currentColor">
+                <path
+                  d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.69-7.86-12-14.46-5.99-9.13-10.76-19.46-14.33-30.98-3.56-11.53-5.35-22.18-5.35-31.96 0-14.58 3.73-26.69 11.19-36.32 7.46-9.63 16.89-14.56 28.29-14.78 4.89 0 10.15 1.25 15.78 3.75 5.63 2.5 9.4 3.81 11.3 3.92 1.52-.11 5.48-1.5 11.89-4.17 6.41-2.67 11.75-3.87 16.03-3.6 12.08.76 21.6 5.37 28.57 13.82-10.66 6.42-15.89 15.45-15.68 27.11.22 9.14 3.73 16.83 10.55 23.08 6.82 6.26 14.86 9.77 24.12 10.53-2.17 6.42-4.89 12.87-8.15 19.34zM119.22 31.81c0-7.39 2.65-14.32 7.95-20.78 5.3-6.46 11.82-10.46 19.56-12 1.09 7.61-1.34 14.65-7.3 21.13-5.96 6.48-12.7 9.87-20.21 11.65z" />
+              </svg>
+            </div>
+            <div class="store-text">
+              <div class="store-text-sub">Download on</div>
+              <div class="store-text-main">App Store</div>
+            </div>
+            <span class="badge-coming-soon">Coming Soon</span>
+          </div>
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="trust-row">
+          <div class="trust-item">
+            <svg viewBox="0 0 20 20">
+              <path
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
+            </svg>
+            <span>100% Free to Use</span>
+          </div>
+          <div class="trust-item">
+            <svg viewBox="0 0 20 20">
+              <path
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
+            </svg>
+            <span>No Account Required</span>
+          </div>
+          <div class="trust-item">
+            <svg viewBox="0 0 20 20">
+              <path
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
+            </svg>
+            <span>Offline Ready</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Right: Interactive Live Counter Preview -->
+      <div class="hero-right" id="demo">
+        <div class="demo-wrapper">
+          <div class="demo-card">
+            <div class="demo-badge-top">
+              <div class="demo-badge-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#38BDF8">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                </svg>
+                <span>Interactive Live Demo</span>
+              </div>
+              <button id="btnResetDemo"
+                style="background:transparent; border:none; color:var(--text-dim); cursor:pointer; font-size:0.8rem; font-weight:600; display:inline-flex; align-items:center; gap:4px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                </svg>
+                <span>Reset</span>
+              </button>
+            </div>
+
+            <div class="demo-counter-container">
+              <div class="demo-counter-label">Workout Push-ups</div>
+              <div class="demo-counter-value" id="demoCount">25</div>
+              <div class="demo-counter-goal" id="demoGoalText">Target Goal: 50 reps</div>
+              <div class="demo-goal-bar">
+                <div class="demo-goal-fill" id="demoGoalFill" style="width: 50%;"></div>
+              </div>
+            </div>
+
+            <!-- Big - / + Buttons -->
+            <div class="demo-buttons-row">
+              <button class="btn-demo-tap btn-demo-minus" id="btnMinus" aria-label="Decrement counter">
+                − 5
+              </button>
+              <button class="btn-demo-tap btn-demo-plus" id="btnPlus" aria-label="Increment counter">
+                + 5
+              </button>
+            </div>
+
+            <!-- Quick Toggles in Demo -->
+            <div class="demo-quick-toggles">
+              <div class="demo-toggle-item" id="toggleSoundDemo">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                </svg>
+                <span id="soundLabel">Sound ON</span>
+              </div>
+              <div class="demo-toggle-item">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z" />
+                </svg>
+                <span>Daily Auto-Reset</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section id="features" style="padding-top: 40px;">
+      <div class="section-title-wrap">
+        <h2 class="section-title">Designed for Everything You Count</h2>
+        <p class="section-sub">Packed with flexible features to make daily counting satisfying, effortless, and
+          organized.</p>
+      </div>
+
+      <div class="features-grid">
+        <!-- Feature 1 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+          </div>
+          <h3>Custom Step Sizes</h3>
+          <p>Increment or decrement by any step value (+1, +5, +10, or custom amounts) tailored to your specific
+            activity.</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+            </svg>
+          </div>
+          <h3>Target Goals & Milestones</h3>
+          <p>Set target limits with intuitive progress bars and celebrate reaching milestones with custom milestone
+            chimes.</p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z" />
+            </svg>
+          </div>
+          <h3>Daily Midnight Auto-Reset</h3>
+          <p>Perfect for daily habits like drinking water, pages read, or morning exercise sets. Automatically resets
+            each midnight.</p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
+            </svg>
+          </div>
+          <h3>Sound, Speech & Haptics</h3>
+          <p>Enjoy crisp click sounds, vibration feedback, and built-in Text-to-Speech (TTS) voice readout of your
+            numbers.</p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z" />
+            </svg>
+          </div>
+          <h3>Physical Volume Key Counting</h3>
+          <p>Click your phone's physical Volume Up and Down buttons to count seamlessly in your pocket or during
+            workouts.</p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16v12H4z" />
+              <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z" />
+            </svg>
+          </div>
+          <h3>Home Screen Widgets</h3>
+          <p>Place sleek 4x2 quick-counter widgets right onto your Android home screen to increment counts with a single
+            tap.</p>
+        </div>
+
+        <!-- Feature 7 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z" />
+            </svg>
+          </div>
+          <h3>Excel & CSV Export/Backup</h3>
+          <p>Export all your records with dates, steps, and totals to CSV spreadsheets. Safely import and restore
+            anytime.</p>
+        </div>
+
+        <!-- Feature 8 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
+            </svg>
+          </div>
+          <h3>100% On-Device Privacy</h3>
+          <p>Your counters stay completely on your device. No cloud database, no tracking of your entries, and no
+            sign-ups.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section class="use-cases-section">
+      <div class="container">
+        <div class="section-title-wrap">
+          <h2 class="section-title">Popular Ways People Use Tally Counter</h2>
+          <p class="section-sub">Versatile for your fitness, productivity, mindfulness, and hobbies.</p>
+        </div>
+
+        <div class="use-cases-grid">
+          <div class="use-case-pill">
+            <div class="use-case-icon-box">
+              <svg viewBox="0 0 24 24"><path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/></svg>
+            </div>
+            <div class="use-case-title">Fitness &amp; Gym</div>
+            <div class="use-case-desc">Push-ups, pull-ups, squats, and running lap sets.</div>
+          </div>
+          <div class="use-case-pill">
+            <div class="use-case-icon-box">
+              <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
+            </div>
+            <div class="use-case-title">Water &amp; Habits</div>
+            <div class="use-case-desc">Track glasses of water daily with auto-midnight reset.</div>
+          </div>
+          <div class="use-case-pill">
+            <div class="use-case-icon-box">
+              <svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4 8 4 8-4zm0 3.5l-8 4-8-4v6.5l8 4 8-4v-6.5z"/></svg>
+            </div>
+            <div class="use-case-title">Inventory &amp; Stock</div>
+            <div class="use-case-desc">Box counts, retail shelf audits, and store supplies.</div>
+          </div>
+          <div class="use-case-pill">
+            <div class="use-case-icon-box">
+              <svg viewBox="0 0 24 24"><path d="M12 2C9.5 5.5 7 8 7 11.5c0 2.76 2.24 5 5 5s5-2.24 5-5C17 8 14.5 5.5 12 2zm0 13c-1.93 0-3.5-1.57-3.5-3.5 0-1.58 1.4-3.5 3.5-5.5 2.1 2 3.5 3.92 3.5 5.5 0 1.93-1.57 3.5-3.5 3.5zm0 4.5c-4.42 0-8-1.79-8-4v2c0 2.21 3.58 4 8 4s8-1.79 8-4v-2c0 2.21-3.58 4-8 4z"/></svg>
+            </div>
+            <div class="use-case-title">Prayers &amp; Chanting</div>
+            <div class="use-case-desc">Japa rounds, tasbeeh beads, and mantra counts.</div>
+          </div>
+          <div class="use-case-pill">
+            <div class="use-case-icon-box">
+              <svg viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5-1.17 0-2.39.15-3.5.5C2.34 5.36 2 6.09 2 6.9v12.2c0 .98.92 1.72 1.88 1.52C5.07 20.37 6.47 20 8 20c1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.53 0 2.93.37 4.12.62.96.2 1.88-.54 1.88-1.52V6.9c0-.81-.34-1.54-.9-1.9zm-2 12.5c-1.04-.2-2.24-.3-3.5-.3-1.53 0-3.32.32-4.5 1.05V7.78C12.18 7.05 13.97 6.7 15.5 6.7c1.26 0 2.46.1 3.5.3v10.5z"/></svg>
+            </div>
+            <div class="use-case-title">Study &amp; Reading</div>
+            <div class="use-case-desc">Track book pages completed and test practice problems.</div>
+          </div>
+          <div class="use-case-pill">
+            <div class="use-case-icon-box">
+              <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            </div>
+            <div class="use-case-title">People &amp; Headcount</div>
+            <div class="use-case-desc">Event entrances, church attendance, and capacity checks.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+      <div class="section-title-wrap">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-sub">Everything you need to know about Tally Counter.</p>
+      </div>
+
+      <div class="faq-item active">
+        <div class="faq-question">
+          <span>Is Tally Counter free to use?</span>
+          <svg viewBox="0 0 24 24">
+            <path d="M7 10l5 5 5-5z" />
+          </svg>
+        </div>
+        <div class="faq-answer">
+          Yes! Tally Counter is completely free to download and use with full core counting functionality, widgets,
+          sound effects, and daily resets. We also offer an optional Pro subscription to remove all ads and support
+          ongoing development.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Is an iPhone / iOS version coming to the Apple App Store?</span>
+          <svg viewBox="0 0 24 24">
+            <path d="M7 10l5 5 5-5z" />
+          </svg>
+        </div>
+        <div class="faq-answer">
+          Yes! The iOS version is currently in development for Apple iPhone and iPad users and will be released on the
+          Apple App Store soon. You can use the Android app on Google Play right now.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Does the app require an internet connection?</span>
+          <svg viewBox="0 0 24 24">
+            <path d="M7 10l5 5 5-5z" />
+          </svg>
+        </div>
+        <div class="faq-answer">
+          No! All counters and count histories work 100% offline. You can count anywhere — in airplanes, remote hiking
+          trails, or subways without internet.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>How does counting with physical volume buttons work?</span>
+          <svg viewBox="0 0 24 24">
+            <path d="M7 10l5 5 5-5z" />
+          </svg>
+        </div>
+        <div class="faq-answer">
+          When Volume Key Counting is enabled in settings, pressing Volume Up increments your active counter, and Volume
+          Down decrements it. This lets you count discreetly in your pocket or during workouts without looking at the
+          screen.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>How can I backup or transfer my counters?</span>
+          <svg viewBox="0 0 24 24">
+            <path d="M7 10l5 5 5-5z" />
+          </svg>
+        </div>
+        <div class="faq-answer">
+          You can tap "Export to Excel (CSV)" inside the app settings to save a full backup file. You can restore this
+          file on any new device using the "Import Counters" feature.
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Download CTA -->
+    <section class="cta-banner">
+      <h2>Start Counting What Matters Today</h2>
+      <p>Download Tally Counter free on Google Play Store and take control of your numbers and habits.</p>
+      <div class="cta-actions">
+        <a href="https://play.google.com/store/apps/details?id=com.tushar.countit" target="_blank"
+          class="btn-store btn-play-store">
+          <div class="store-icon">
+            <svg viewBox="0 0 512 512" width="26" height="26">
+              <path fill="#4285F4" d="M325.3 234.3L104.6 13l280.8 161.2-60.1 59.9z" />
+              <path fill="#34A853"
+                d="M47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0z" />
+              <path fill="#FBBC05"
+                d="M471.7 232.7l-86.3-49.8-60.1 60.1 60.1 60.1 86.3-49.8c15.1-8.7 24.3-24.8 24.3-40.3s-9.2-31.6-24.3-40.3z" />
+              <path fill="#EA4335" d="M104.6 499l280.8-161.3-60.1-59.9L104.6 499z" />
+            </svg>
+          </div>
+          <div class="store-text">
+            <div class="store-text-sub">Available now on</div>
+            <div class="store-text-main">Google Play Store</div>
+          </div>
+        </a>
+
+        <div class="btn-store btn-app-store-coming">
+          <div class="store-icon">
+            <svg viewBox="0 0 170 170" width="24" height="24" fill="currentColor">
+              <path
+                d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.69-7.86-12-14.46-5.99-9.13-10.76-19.46-14.33-30.98-3.56-11.53-5.35-22.18-5.35-31.96 0-14.58 3.73-26.69 11.19-36.32 7.46-9.63 16.89-14.56 28.29-14.78 4.89 0 10.15 1.25 15.78 3.75 5.63 2.5 9.4 3.81 11.3 3.92 1.52-.11 5.48-1.5 11.89-4.17 6.41-2.67 11.75-3.87 16.03-3.6 12.08.76 21.6 5.37 28.57 13.82-10.66 6.42-15.89 15.45-15.68 27.11.22 9.14 3.73 16.83 10.55 23.08 6.82 6.26 14.86 9.77 24.12 10.53-2.17 6.42-4.89 12.87-8.15 19.34zM119.22 31.81c0-7.39 2.65-14.32 7.95-20.78 5.3-6.46 11.82-10.46 19.56-12 1.09 7.61-1.34 14.65-7.3 21.13-5.96 6.48-12.7 9.87-20.21 11.65z" />
+            </svg>
+          </div>
+          <div class="store-text">
+            <div class="store-text-sub">Apple App Store</div>
+            <div class="store-text-main">Coming Soon</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-content">
+      <div>
+        © 2026 Tally Counter (Count It). All rights reserved.
+      </div>
+      <div class="footer-links">
+        <a href="https://aspiretechsolutions.github.io/tally-counter-privacy/" target="_blank">Privacy Policy</a>
+        <a href="https://play.google.com/store/apps/details?id=com.tushar.countit" target="_blank">Google Play</a>
+        <a href="#features">Features</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Interactive Demo Script -->
+  <script>
+    (function () {
+      let count = 25;
+      const targetGoal = 50;
+      const step = 5;
+      let soundEnabled = true;
+
+      const demoCountEl = document.getElementById('demoCount');
+      const demoGoalFillEl = document.getElementById('demoGoalFill');
+      const btnPlus = document.getElementById('btnPlus');
+      const btnMinus = document.getElementById('btnMinus');
+      const btnReset = document.getElementById('btnResetDemo');
+      const toggleSound = document.getElementById('toggleSoundDemo');
+      const soundLabel = document.getElementById('soundLabel');
+
+      // Web Audio API simple pleasant click/chime synthesizer
+      let audioCtx = null;
+      function playAudio(frequency, duration) {
+        if (!soundEnabled) return;
+        try {
+          if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+          }
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        } catch (e) { }
+      }
+
+      function updateUI() {
+        demoCountEl.textContent = count;
+        const progress = Math.min(Math.max((count / targetGoal) * 100, 0), 100);
+        demoGoalFillEl.style.width = progress + '%';
+
+        // Animate count bump
+        demoCountEl.style.transform = 'scale(1.08)';
+        setTimeout(() => {
+          demoCountEl.style.transform = 'scale(1)';
+        }, 120);
+      }
+
+      btnPlus.addEventListener('click', function () {
+        count += step;
+        if (count >= targetGoal) {
+          playAudio(880, 0.25); // high celebratory chime
+        } else {
+          playAudio(600, 0.08); // crisp click
+        }
+        updateUI();
+      });
+
+      btnMinus.addEventListener('click', function () {
+        count = Math.max(0, count - step);
+        playAudio(440, 0.08);
+        updateUI();
+      });
+
+      btnReset.addEventListener('click', function () {
+        count = 0;
+        playAudio(350, 0.1);
+        updateUI();
+      });
+
+      toggleSound.addEventListener('click', function () {
+        soundEnabled = !soundEnabled;
+        soundLabel.textContent = soundEnabled ? 'Sound ON' : 'Sound OFF';
+        if (soundEnabled) playAudio(650, 0.1);
+      });
+
+      // FAQ accordion
+      document.querySelectorAll('.faq-question').forEach(item => {
+        item.addEventListener('click', () => {
+          const parent = item.parentElement;
+          parent.classList.toggle('active');
+        });
+      });
+    })();
+  </script>
+</body>
+
+</html>
